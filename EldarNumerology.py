@@ -39,14 +39,11 @@ class Person:
         calcTable2 = {'א': 1, 'י': 1, 'ה': 5, 'ו': 6}
         name = list(word)
         total = 0
-        print(name)
         for letter in name:
             if letter == 'א' or letter == 'י' or letter == 'ה' or letter == 'ו':
                 continue
             else:
-                # print(letter)
                 value = self.calcTable[letter]
-                # print(value)
                 total = total + value
         return (total)
 
@@ -114,12 +111,10 @@ class Person:
         lname = self.ahviChar(self.lastName)
         lname = self.reduce(lname)
         total = fname + lname
-        # print(f'name {sname}, surname {gname}')
         return (total)
 
     def gethand(self):
         fname = self.ncalc(self.firstName)
-        # sname = self.reduce(sname)
         lname = self.ncalc(self.lastName)
         lname = self.reduce(lname)
         total = fname + lname
@@ -138,7 +133,6 @@ class Person:
         lname = self.not_ahviChar(self.lastName)
         lname = self.reduce(lname)
         total = fname + lname
-        # print(f'name {sname}, surname {gname}')
         return (total)
 
     def getRightLeg(self):
@@ -150,15 +144,6 @@ class Person:
 
     def getLeftLeg(self):
         """Return the number for the right legs ."""
-        # day = dateofBirthe.split("/")[0]
-        # if day[0] == "0":
-        #     day = day[1:]
-        # month = dateofBirthe.split("/")[1]
-        # if month[0] == "0":
-        #     month = month[1:]
-        # year = dateofBirthe.split("/")[2]
-        # year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
-        # total1 = int(day) + int(month) + int(year)
         total = int(self.reduce_value(self.getSpirala())) + int(self.reduce_value(self.gethand()))
         return total
 
@@ -167,17 +152,15 @@ class Person:
         day = self.dateofBirth.split("/")[0]
         if day[0] == "0":
             day = day[1:]
+        day = self.reduce_value(day)
         month = self.dateofBirth.split("/")[1]
         if month[0] == "0":
             month = month[1:]
+        month = self.reduce_value(month)
         year = self.dateofBirth.split("/")[2]
         year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
+        year = self.reduce_value(year)
         total = int(day) + int(month) + int(year)
-        reduced = self.calculate_value(total)
-        result = f"{total}/{reduced}"
-        # red_total = str(total)[0] + str(total)[1]
-        # print(f"{str(total)[0]} nad {str(total)[1]}")
-        # result = f"{total}\\{red_total}"
         return total
 
     def calculate_value(self, value):
@@ -268,7 +251,7 @@ def index():
         # planted_image = plant_parameters(image, parameters, locations)
 
         cv2.imwrite("static/result.jpg", image)
-        time.sleep(2)
+        # time.sleep(2)
         return render_template('result.html')
 
     return render_template('index.html')
