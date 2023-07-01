@@ -144,7 +144,7 @@ class Person:
 
     def getLeftLeg(self):
         """Return the number for the right legs ."""
-        total = int(self.reduce_value(self.getSpirala())) + int(self.reduce_value(self.gethand()))
+        total = int(self.getSpirala2()) + int(self.reduce_value(self.gethand()))
         return total
 
     def getSpirala(self):
@@ -161,6 +161,23 @@ class Person:
         year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
         year = self.reduce_value(year)
         total = int(day) + int(month) + int(year)
+        return total
+
+    def getSpirala2(self):
+        """Return the number for the spirala ."""
+        day = self.dateofBirth.split("/")[0]
+        if day[0] == "0":
+            day = day[1:]
+        day = self.reduce_value(day)
+        month = self.dateofBirth.split("/")[1]
+        if month[0] == "0":
+            month = month[1:]
+        month = self.reduce_value(month)
+        year = self.dateofBirth.split("/")[2]
+        year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
+        year = self.reduce_value(year)
+        total = int(day) + int(month) + int(year)
+        print(total)
         return total
 
     def calculate_value(self, value):
@@ -221,6 +238,8 @@ def index():
         calRightLeg = (person.calculate_value(rightLeg))
         spirala = (person.getSpirala())
         calSpirala = (person.calculate_value(spirala))
+        spirala2 = (person.getSpirala2())
+        calSpirala2 = (person.calculate_value(spirala2))
         leftLeg = (person.getLeftLeg())
         calLeftLeg = (person.calculate_value(leftLeg))
 
