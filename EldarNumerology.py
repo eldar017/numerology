@@ -1,13 +1,24 @@
+from flask import Flask, render_template, redirect, url_for, request
 import cv2
+import time
+from fontTools.ttLib import TTFont
 import numpy as np
 
+app = Flask(__name__, static_folder='static')
+font1 = TTFont('font/Roboto-Regular.ttf')
+
+# שמור את קובץ הפונט בתבנית המתאימה ל-OpenCV
+font1.save('font/converted_robert.xml')
+
 class Person:
-    def __init__(self, firstName, lastName):
+    def __init__(self, firstName, lastName, dateofBirth):  # הוספת משתנה 'dateofBirth' למחלקה
         self.firstName = firstName
         self.lastName = lastName
-        self.calcTable = {'א': 1, 'י': 1, 'ק': 1, 'ב': 2, 'כ': 2, 'ר': 2, 'ג': 3, 'ל': 3, 'ף': 3,
-                          'ש': 3, 'ד': 4, 'מ': 4, 'ת': 4, 'ה': 5, 'נ': 5, 'ו': 6, 'ס': 6, 'ז': 7, 'ע': 7,
-                          'ח': 8, 'פ': 8, 'ט': 9, 'צ': 9}
+        self.dateofBirth = dateofBirth
+        # כאן יש קוד נוסף למחלקה...
+        self.calcTable = {'א': 1, 'י': 1, 'ק': 1, 'ב': 2, 'כ': 2, 'ך': 2, 'ר': 2, 'ג': 3, 'ל': 3, 'ף': 3,
+                          'ש': 3, 'ד': 4, 'מ': 4, 'ם': 4, 'ת': 4, 'ה': 5, 'נ': 5, 'ן': 5, 'ו': 6, 'ס': 6, 'ז': 7,
+                          'ע': 7,'ח': 8, 'פ': 8, 'ף': 8, 'ט': 9, 'צ': 9, 'ץ': 9, ' ': 0}
         self.risks = [7, 16, 25, 34, 52, 61, 70, 79, 88, 92]
         self.highrisks = [29, 40, 43]
         self.problematic = 0
@@ -132,25 +143,34 @@ class Person:
 
     def getRightLeg(self):
         """Return the number for the right legs ."""
-        day = dateofBirthe.split("/")[0]
+        day = self.dateofBirth.split("/")[0]
         if day[0] == "0":
             day = day[1:]
         return day
 
     def getLeftLeg(self):
         """Return the number for the right legs ."""
-        total = int(spirala) + int(hand)
+        # day = dateofBirthe.split("/")[0]
+        # if day[0] == "0":
+        #     day = day[1:]
+        # month = dateofBirthe.split("/")[1]
+        # if month[0] == "0":
+        #     month = month[1:]
+        # year = dateofBirthe.split("/")[2]
+        # year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
+        # total1 = int(day) + int(month) + int(year)
+        total = int(self.reduce_value(self.getSpirala())) + int(self.reduce_value(self.gethand()))
         return total
 
     def getSpirala(self):
         """Return the number for the spirala ."""
-        day = dateofBirthe.split("/")[0]
+        day = self.dateofBirth.split("/")[0]
         if day[0] == "0":
             day = day[1:]
-        month = dateofBirthe.split("/")[1]
+        month = self.dateofBirth.split("/")[1]
         if month[0] == "0":
             month = month[1:]
-        year = dateofBirthe.split("/")[2]
+        year = self.dateofBirth.split("/")[2]
         year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
         total = int(day) + int(month) + int(year)
         reduced = self.calculate_value(total)
@@ -170,61 +190,101 @@ class Person:
             result = f"{value}/{new_var}"
         return result
 
-incoming = "אלדר לוי"
-dateofBirthe = "04/09/1990"
-
-incoming = incoming.upper()
-incoming = incoming.split(" ")
-
-firstName = incoming[0]
-lastName = incoming[1]
-
-person = Person(firstName, lastName)
-# print(name)
-# print(surname)
-head = (person.gethead())
-calHead = (person.calculate_value(head))
-hand = (person.gethand())
-calHand = (person.calculate_value(hand))
-legs = (person.getLegs())
-calLegs = (person.calculate_value(legs))
-rightLeg = (person.getRightLeg())
-calRightLeg = (person.calculate_value(rightLeg))
-spirala = (person.getSpirala())
-calSpirala = (person.calculate_value(spirala))
-leftLeg = (person.getLeftLeg())
-calLeftLeg = (person.calculate_value(leftLeg))
-
-print(f"head is: {calHead}, hand is :{calHand}, legs is: {calLegs}, rightLeg is : {calRightLeg}, spirala is: {calSpirala}, leftLeg is : {calLeftLeg}")
-
-
-
+    def reduce_value(self, value):
+        new_var = 0
+        if int(value) < 10:
+            result = value
+        else:
+            for digit in str(value):
+                new_var += int(digit)
+            result = new_var
+        return result
 
 def plant_parameters(image, parameters, locations):
-  """Plants the given parameters at the given locations in the image.
+    """
+    Plants the given parameters at the given locations in the image.
 
-  Args:
-    image: The image to plant the parameters in.
-    parameters: The parameters to plant.
-    locations: The locations to plant the parameters at.
+    Args:
+        image: The image to plant the parameters in.
+        parameters: The parameters to plant.
+        locations: The locations to plant the parameters at.
 
-  Returns:
-    The image with the parameters planted.
-  """
+    Returns:
+        The image with the parameters planted.
+    """
+    fontPath = 'font/Roboto-Regular.ttf'
+    for parameter, location in zip(parameters, locations):
 
-  for location, parameter in zip(locations, parameters):
-    cv2.putText(image, str(parameter), location, cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                (255, 0, 0), 1)
+        cv2.putText(image, str(parameter), location, cv2.FONT_HERSHEY_TRIPLEX, 0.5, (0, 0, 0), 1)
 
-  return image
+    return image
 
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        firstName = request.form['firstName']
+        lastName = request.form['lastName']
+        dateOfBirth = request.form['dateOfBirth']
+
+        # ... בצע את כל החישובים על פי הקלט המתקבל מהמשתמש ...
+        person = Person(firstName, lastName, dateOfBirth)
+        head = (person.gethead())
+        calHead = (person.calculate_value(head))
+        hand = (person.gethand())
+        calHand = (person.calculate_value(hand))
+        legs = (person.getLegs())
+        calLegs = (person.calculate_value(legs))
+        rightLeg = (person.getRightLeg())
+        calRightLeg = (person.calculate_value(rightLeg))
+        spirala = (person.getSpirala())
+        calSpirala = (person.calculate_value(spirala))
+        leftLeg = (person.getLeftLeg())
+        calLeftLeg = (person.calculate_value(leftLeg))
+
+        # כאן יש קוד נוסף עם החישובים...
+        font_path = 'font/Roboto-Regular.ttf'  # הגדר את הנתיב לקובץ ה-ttf של הפונט
+        font_face = cv2.FONT_HERSHEY_COMPLEX
+        font_scale = 0.55
+        font_thickness = 1
+        image = cv2.imread("background.jpg")
+
+        # הוספת הטקסטים לתמונה
+        parameters = [calHead, calHand, calHand, calLegs, calRightLeg, calLeftLeg, calSpirala]
+        locations = [(290, 38), (509, 408), (70, 410), (283, 727), (540, 726), (25, 726), (312, 210)]
+        color = (0, 0, 0)  # צבע שחור
+
+        for parameter, location in zip(parameters, locations):
+            text = str(parameter)
+            position = location
+            cv2.putText(image, text, position, font_face, font_scale, color, font_thickness, cv2.LINE_AA, False)
+
+        # font_path = 'font/converted_robert.xml'
+        # image = cv2.imread("background.jpg")
+        # font = cv2.freetype.createFreeType2()
+        # font.loadFontData(font_path)
+        # parameters = [calHead, calHand, calHand, calLegs, calRightLeg, calLeftLeg, calSpirala]
+        # locations = [(302, 38), (509, 408), (75, 410), (283, 727), (540, 726), (25, 726), (312, 208)]
+        #
+        # planted_image = plant_parameters(image, parameters, locations)
+
+        cv2.imwrite("static/result.jpg", image)
+        time.sleep(2)
+        return render_template('result.html')
+
+    return render_template('index.html')
+
+@app.route('/home')
+def home():
+    return redirect(url_for('index'))
+
+@app.route('/result')
+def show_result():
+    # time.sleep(10)
+    # החישובים והקוד המתאים ליצירת התמונה result.jpg
+    # ...
+
+    image_filename = 'static/result.jpg'
+    return render_template('result.html', image_filename=image_filename)
 
 if __name__ == "__main__":
-  image = cv2.imread("man.jpg")
-  parameters = [calLeftLeg, leftLeg, calSpirala]
-  locations = [(10, 10), (100, 100), (200, 200)]
-
-  planted_image = plant_parameters(image, parameters, locations)
-
-  cv2.imshow("Planted Image", planted_image)
-  cv2.waitKey(0)
+    app.run(host='0.0.0.0', debug=True)

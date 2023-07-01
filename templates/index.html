@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  <h2>:הכנס את הפרטים האישיים</h2>
+  <form id="myForm" method="POST">
+    <label for="firstName">:שם פרטי</label><br>
+    <input type="text" id="firstName" name="firstName" required><br><br>
+    <label for="lastName">:שם משפחה</label><br>
+    <input type="text" id="lastName" name="lastName" required><br><br>
+    <label for="dateOfBirth">:תאריך לידה</label><br>
+    <input type="text" id="dateOfBirth" name="dateOfBirth" required><br><br>
+    <input type="submit" value="Submit">
+  </form>
+
+  <style>
+    @font-face {
+        font-family: 'שם-הפונט'; /* שם זה יכול להיות כל שם שתרצה לתת לפונט */
+        src: url('/font/Roboto-Regular.ttf'); /* התיקייה 'static' היא התיקייה בה אתה שמת את קובץ ה-TTF */
+    }
+</style>
+  <script>
+    document.getElementById("myForm").addEventListener("submit", function(event) {
+      var firstName = document.getElementById("firstName").value;
+      var lastName = document.getElementById("lastName").value;
+      var dateOfBirth = document.getElementById("dateOfBirth").value;
+
+      if (firstName === '' || lastName === '' || dateOfBirth === '') {
+        event.preventDefault();
+        alert("Please fill in all fields.");
+      }
+    });
+  </script>
+</body>
+</html>
