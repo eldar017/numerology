@@ -61,6 +61,7 @@ class Person:
         return total
 
     def reduce(self, number):
+        number = int(number)
         """Reduce gross numbers to netto numbers."""
         if number == 11 or number == 22 or number == 13 or number == 14 or number == 16 or number == 19 or number == 33:  # Numbers 11 or 22 should not be reduced.
             total = number
@@ -69,8 +70,6 @@ class Person:
             size = len(str(total))
             if size > 1:
                 while size > 1:  # Repeats until the number is not fully reduced to one digit only.
-                    if total == 11 or total == 22 or total == 13 or total == 14 or total == 16 or total == 19:  # Numbers 11,13,14,16,19,22 should not be reduced.
-                        break
                     word = str(total)
                     word = list(word)
                     total = 0
@@ -80,7 +79,7 @@ class Person:
 
             else:
                 total = number
-        return (total)
+        return total
 
     def ncalc(self, word):
         """Calculate the netto numbers."""
@@ -144,7 +143,7 @@ class Person:
 
     def getLeftLeg(self):
         """Return the number for the right legs ."""
-        total = int(self.getSpirala2()) + int(self.reduce_value(self.gethand()))
+        total = int(self.reduce_value(self.getSpirala())) + int(self.reduce_value(self.gethand()))
         return total
 
     def getSpirala(self):
@@ -161,6 +160,7 @@ class Person:
         year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
         year = self.reduce_value(year)
         total = int(day) + int(month) + int(year)
+        # print(f"day is {int(day)}, month is : {int(month)}, years is: {int(year)}, total is : {total}")
         return total
 
     def getSpirala2(self):
@@ -177,11 +177,11 @@ class Person:
         year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
         year = self.reduce_value(year)
         total = int(day) + int(month) + int(year)
-        print(total)
         return total
 
     def calculate_value(self, value):
         new_var = 0
+
         if int(value) < 10:
             result = value
         else:
@@ -191,14 +191,18 @@ class Person:
         return result
 
     def reduce_value(self, value):
+        val = self.reduce(value)
         new_var = 0
-        if int(value) < 10:
-            result = value
+        if val == 11 or val == 22 or val == 13 or val == 14 or val == 16 or val == 19 or val == 33:
+            result = val
+        elif int(val) < 10:
+            result = val
         else:
-            for digit in str(value):
+            for digit in str(val):
                 new_var += int(digit)
             result = new_var
         return result
+
 
 def plant_parameters(image, parameters, locations):
     """
@@ -239,7 +243,6 @@ def index():
         spirala = (person.getSpirala())
         calSpirala = (person.calculate_value(spirala))
         spirala2 = (person.getSpirala2())
-        calSpirala2 = (person.calculate_value(spirala2))
         leftLeg = (person.getLeftLeg())
         calLeftLeg = (person.calculate_value(leftLeg))
 
@@ -260,17 +263,8 @@ def index():
             position = location
             cv2.putText(image, text, position, font_face, font_scale, color, font_thickness, cv2.LINE_AA, False)
 
-        # font_path = 'font/converted_robert.xml'
-        # image = cv2.imread("background.jpg")
-        # font = cv2.freetype.createFreeType2()
-        # font.loadFontData(font_path)
-        # parameters = [calHead, calHand, calHand, calLegs, calRightLeg, calLeftLeg, calSpirala]
-        # locations = [(302, 38), (509, 408), (75, 410), (283, 727), (540, 726), (25, 726), (312, 208)]
-        #
-        # planted_image = plant_parameters(image, parameters, locations)
 
         cv2.imwrite("static/result.jpg", image)
-        # time.sleep(2)
         return render_template('result.html')
 
     return render_template('index.html')
@@ -281,9 +275,7 @@ def home():
 
 @app.route('/result')
 def show_result():
-    # time.sleep(10)
     # החישובים והקוד המתאים ליצירת התמונה result.jpg
-    # ...
 
     image_filename = 'static/result.jpg'
     return render_template('result.html', image_filename=image_filename)
