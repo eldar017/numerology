@@ -62,6 +62,7 @@ class Person:
 
     def reduce(self, number):
         number = int(number)
+        print(number)
         """Reduce gross numbers to netto numbers."""
         if number == 11 or number == 22 or number == 13 or number == 14 or number == 16 or number == 19 or number == 33:  # Numbers 11 or 22 should not be reduced.
             total = number
@@ -265,6 +266,7 @@ class Person:
     def fourth_period(self):
         year = self.dateofBirth.split("/")[2]
         year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
+        print("fourth_period ")
         year = self.reduce_value(year)
         return year
 
@@ -323,7 +325,7 @@ def index():
         calSecondPeriod = (person.calculate_value(secondPeriod))
         thirdPeriod = (person.third_period())
         calThirdPeriod = (person.calculate_value(thirdPeriod))
-        fourthPeriod = (person.fourth_peak())
+        fourthPeriod = (person.fourth_period())
         calFourthPeriod = (person.calculate_value(fourthPeriod))
 
         print(
