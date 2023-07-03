@@ -203,6 +203,70 @@ class Person:
             result = new_var
         return result
 
+    def first_peak(self):
+        day = self.dateofBirth.split("/")[0]
+        if day[0] == "0":
+            day = day[1:]
+        day = self.reduce_value(day)
+        month = self.dateofBirth.split("/")[1]
+        if month[0] == "0":
+            month = month[1:]
+        month = self.reduce_value(month)
+        total = int(day) + int(month)
+        return total
+
+    def first_period(self):
+        month = self.dateofBirth.split("/")[1]
+        if month[0] == "0":
+            month = month[1:]
+        month = self.reduce_value(month)
+        return month
+
+    def second_peak(self):
+        day = self.dateofBirth.split("/")[0]
+        if day[0] == "0":
+            day = day[1:]
+        day = self.reduce_value(day)
+        year = self.dateofBirth.split("/")[2]
+        year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
+        year = self.reduce_value(year)
+        total = int(day) + int(year)
+        return total
+
+    def second_period(self):
+        day = self.dateofBirth.split("/")[0]
+        if day[0] == "0":
+            day = day[1:]
+        day = self.reduce_value(day)
+        return day
+
+    def third_peak(self):
+        total = self.reduce_value(self.first_peak()) + self.reduce_value(self.second_peak())
+        return total
+
+    def third_period(self):
+        day = self.dateofBirth.split("/")[0]
+        if day[0] == "0":
+            day = day[1:]
+        day = self.reduce_value(day)
+        return day
+
+    def fourth_peak(self):
+        month = self.dateofBirth.split("/")[1]
+        if month[0] == "0":
+            month = month[1:]
+        month = self.reduce_value(month)
+        year = self.dateofBirth.split("/")[2]
+        year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
+        year = self.reduce_value(year)
+        total = int(month) + int(year)
+        return total
+
+    def fourth_period(self):
+        year = self.dateofBirth.split("/")[2]
+        year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
+        year = self.reduce_value(year)
+        return year
 
 def plant_parameters(image, parameters, locations):
     """
@@ -242,10 +306,28 @@ def index():
         calRightLeg = (person.calculate_value(rightLeg))
         spirala = (person.getSpirala())
         calSpirala = (person.calculate_value(spirala))
-        spirala2 = (person.getSpirala2())
+        # spirala2 = (person.getSpirala2())
         leftLeg = (person.getLeftLeg())
         calLeftLeg = (person.calculate_value(leftLeg))
+        firstPeak = (person.first_peak())
+        calFirsrtPeak = (person.calculate_value(firstPeak))
+        secondPeak = (person.second_peak())
+        calSecondPeak = (person.calculate_value(secondPeak))
+        thirdPeak = (person.third_peak())
+        calThirdPeak = (person.calculate_value(thirdPeak))
+        fourthPeak = (person.fourth_peak())
+        calFourthPeak = (person.calculate_value(fourthPeak))
+        firstPeriod = (person.first_period())
+        calFirsrtPeriod = (person.calculate_value(firstPeriod))
+        secondPeriod = (person.second_period())
+        calSecondPeriod = (person.calculate_value(secondPeriod))
+        thirdPeriod = (person.third_period())
+        calThirdPeriod = (person.calculate_value(thirdPeriod))
+        fourthPeriod = (person.fourth_peak())
+        calFourthPeriod = (person.calculate_value(fourthPeriod))
 
+        print(
+            f"firstPeak: {calFirsrtPeak}, firstPeriod :{calFirsrtPeriod}, secondPeak: {calSecondPeak}, secondPeriod : {calSecondPeriod}, thirdPeak is: {calThirdPeak}, thirdPeriod is : {calThirdPeriod} , fourthPeak is: {calFourthPeak}, fourthPeriod is : {calFourthPeriod}")
         # כאן יש קוד נוסף עם החישובים...
         font_path = 'font/Roboto-Regular.ttf'  # הגדר את הנתיב לקובץ ה-ttf של הפונט
         font_face = cv2.FONT_HERSHEY_COMPLEX
