@@ -1,0 +1,20 @@
+.image-container {
+    display: flex;
+    align-items: center;
+}
+
+.image-container img {
+    margin-right: 10px;
+}
+
+.image_filename {
+    width: 300px;
+    height: auto;
+}
+
+.image_filename2 {
+    width: 200px;
+    height: auto;
+    float: right;
+    margin-left: 20px;
+}

@@ -1,10 +1,24 @@
+from flask import Flask, render_template, redirect, url_for, request
+import cv2
+import time
+from fontTools.ttLib import TTFont
+import numpy as np
+
+app = Flask(__name__, static_folder='static')
+font1 = TTFont('font/Roboto-Regular.ttf')
+
+# שמור את קובץ הפונט בתבנית המתאימה ל-OpenCV
+font1.save('font/converted_robert.xml')
+
 class Person:
-    def __init__(self, firstName, lastName):
+    def __init__(self, firstName, lastName, dateofBirth):  # הוספת משתנה 'dateofBirth' למחלקה
         self.firstName = firstName
         self.lastName = lastName
-        self.calcTable = {'א': 1, 'י': 1, 'ק': 1, 'ב': 2, 'כ': 2, 'ר': 2, 'ג': 3, 'ל': 3, 'ף': 3,
-                          'ש': 3, 'ד': 4, 'מ': 4, 'ת': 4, 'ה': 5, 'נ': 5, 'ו': 6, 'ס': 6, 'ז': 7, 'ע': 7,
-                          'ח': 8, 'פ': 8, 'ט': 9, 'צ': 9}
+        self.dateofBirth = dateofBirth
+        # כאן יש קוד נוסף למחלקה...
+        self.calcTable = {'א': 1, 'י': 1, 'ק': 1, 'ב': 2, 'כ': 2, 'ך': 2, 'ר': 2, 'ג': 3, 'ל': 3, 'ף': 3,
+                          'ש': 3, 'ד': 4, 'מ': 4, 'ם': 4, 'ת': 4, 'ה': 5, 'נ': 5, 'ן': 5, 'ו': 6, 'ס': 6, 'ז': 7,
+                          'ע': 7,'ח': 8, 'פ': 8, 'ף': 8, 'ט': 9, 'צ': 9, 'ץ': 9, ' ': 0}
         self.risks = [7, 16, 25, 34, 52, 61, 70, 79, 88, 92]
         self.highrisks = [29, 40, 43]
         self.problematic = 0
@@ -25,14 +39,11 @@ class Person:
         calcTable2 = {'א': 1, 'י': 1, 'ה': 5, 'ו': 6}
         name = list(word)
         total = 0
-        print(name)
         for letter in name:
             if letter == 'א' or letter == 'י' or letter == 'ה' or letter == 'ו':
                 continue
             else:
-                # print(letter)
                 value = self.calcTable[letter]
-                # print(value)
                 total = total + value
         return (total)
 
@@ -50,6 +61,7 @@ class Person:
         return total
 
     def reduce(self, number):
+        number = int(number)
         """Reduce gross numbers to netto numbers."""
         if number == 11 or number == 22 or number == 13 or number == 14 or number == 16 or number == 19 or number == 33:  # Numbers 11 or 22 should not be reduced.
             total = number
@@ -58,8 +70,6 @@ class Person:
             size = len(str(total))
             if size > 1:
                 while size > 1:  # Repeats until the number is not fully reduced to one digit only.
-                    if total == 11 or total == 22 or total == 13 or total == 14 or total == 16 or total == 19:  # Numbers 11,13,14,16,19,22 should not be reduced.
-                        break
                     word = str(total)
                     word = list(word)
                     total = 0
@@ -69,7 +79,7 @@ class Person:
 
             else:
                 total = number
-        return (total)
+        return total
 
     def ncalc(self, word):
         """Calculate the netto numbers."""
@@ -100,12 +110,10 @@ class Person:
         lname = self.ahviChar(self.lastName)
         lname = self.reduce(lname)
         total = fname + lname
-        # print(f'name {sname}, surname {gname}')
         return (total)
 
     def gethand(self):
         fname = self.ncalc(self.firstName)
-        # sname = self.reduce(sname)
         lname = self.ncalc(self.lastName)
         lname = self.reduce(lname)
         total = fname + lname
@@ -124,41 +132,56 @@ class Person:
         lname = self.not_ahviChar(self.lastName)
         lname = self.reduce(lname)
         total = fname + lname
-        # print(f'name {sname}, surname {gname}')
         return (total)
 
     def getRightLeg(self):
         """Return the number for the right legs ."""
-        day = dateofBirthe.split("/")[0]
+        day = self.dateofBirth.split("/")[0]
         if day[0] == "0":
             day = day[1:]
         return day
 
     def getLeftLeg(self):
         """Return the number for the right legs ."""
-        total = int(spirala) + int(hand)
+        total = int(self.reduce_value(self.getSpirala())) + int(self.reduce_value(self.gethand()))
         return total
 
     def getSpirala(self):
         """Return the number for the spirala ."""
-        day = dateofBirthe.split("/")[0]
+        day = self.dateofBirth.split("/")[0]
         if day[0] == "0":
             day = day[1:]
-        month = dateofBirthe.split("/")[1]
+        day = self.reduce_value(day)
+        month = self.dateofBirth.split("/")[1]
         if month[0] == "0":
             month = month[1:]
-        year = dateofBirthe.split("/")[2]
+        month = self.reduce_value(month)
+        year = self.dateofBirth.split("/")[2]
         year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
+        year = self.reduce_value(year)
         total = int(day) + int(month) + int(year)
-        reduced = self.calculate_value(total)
-        result = f"{total}/{reduced}"
-        # red_total = str(total)[0] + str(total)[1]
-        # print(f"{str(total)[0]} nad {str(total)[1]}")
-        # result = f"{total}\\{red_total}"
+        # print(f"day is {int(day)}, month is : {int(month)}, years is: {int(year)}, total is : {total}")
+        return total
+
+    def getSpirala2(self):
+        """Return the number for the spirala ."""
+        day = self.dateofBirth.split("/")[0]
+        if day[0] == "0":
+            day = day[1:]
+        day = self.reduce_value(day)
+        month = self.dateofBirth.split("/")[1]
+        if month[0] == "0":
+            month = month[1:]
+        month = self.reduce_value(month)
+        year = self.dateofBirth.split("/")[2]
+        year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
+        year = self.reduce_value(year)
+        total = int(day) + int(month) + int(year)
         return total
 
     def calculate_value(self, value):
         new_var = 0
+
         if int(value) < 10:
             result = value
         else:
@@ -167,29 +190,197 @@ class Person:
             result = f"{value}/{new_var}"
         return result
 
-incoming = "אלדר לוי"
-dateofBirthe = "04/09/1990"
+    def reduce_value(self, value):
+        val = self.reduce(value)
+        new_var = 0
+        if val == 11 or val == 22 or val == 13 or val == 14 or val == 16 or val == 19 or val == 33:
+            result = val
+        elif int(val) < 10:
+            result = val
+        else:
+            for digit in str(val):
+                new_var += int(digit)
+            result = new_var
+        return result
 
-incoming = incoming.upper()
-incoming = incoming.split(" ")
+    def first_peak(self):
+        day = self.dateofBirth.split("/")[0]
+        if day[0] == "0":
+            day = day[1:]
+        day = self.reduce_value(day)
+        month = self.dateofBirth.split("/")[1]
+        if month[0] == "0":
+            month = month[1:]
+        month = self.reduce_value(month)
+        total = int(day) + int(month)
+        return total
 
-firstName = incoming[0]
-lastName = incoming[1]
+    def first_period(self):
+        month = self.dateofBirth.split("/")[1]
+        if month[0] == "0":
+            month = month[1:]
+        month = self.reduce_value(month)
+        return month
 
-person = Person(firstName, lastName)
-# print(name)
-# print(surname)
-head = (person.gethead())
-calHead = (person.calculate_value(head))
-hand = (person.gethand())
-calHand = (person.calculate_value(hand))
-legs = (person.getLegs())
-calLegs = (person.calculate_value(legs))
-rightLeg = (person.getRightLeg())
-calRightLeg = (person.calculate_value(rightLeg))
-spirala = (person.getSpirala())
-calSpirala = (person.calculate_value(spirala))
-leftLeg = (person.getLeftLeg())
-calLeftLeg = (person.calculate_value(leftLeg))
+    def second_peak(self):
+        day = self.dateofBirth.split("/")[0]
+        if day[0] == "0":
+            day = day[1:]
+        day = self.reduce_value(day)
+        year = self.dateofBirth.split("/")[2]
+        year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
+        year = self.reduce_value(year)
+        total = int(day) + int(year)
+        return total
 
-print(f"head is: {calHead}, hand is :{calHand}, legs is: {calLegs}, rightLeg is : {calRightLeg}, spirala is: {calSpirala}, leftLeg is : {calLeftLeg}")
+    def second_period(self):
+        day = self.dateofBirth.split("/")[0]
+        if day[0] == "0":
+            day = day[1:]
+        day = self.reduce_value(day)
+        return day
+
+    def third_peak(self):
+        total = self.reduce_value(self.first_peak()) + self.reduce_value(self.second_peak())
+        return total
+
+    def third_period(self):
+        day = self.dateofBirth.split("/")[0]
+        if day[0] == "0":
+            day = day[1:]
+        day = self.reduce_value(day)
+        return day
+
+    def fourth_peak(self):
+        month = self.dateofBirth.split("/")[1]
+        if month[0] == "0":
+            month = month[1:]
+        month = self.reduce_value(month)
+        year = self.dateofBirth.split("/")[2]
+        year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
+        year = self.reduce_value(year)
+        total = int(month) + int(year)
+        return total
+
+    def fourth_period(self):
+        year = self.dateofBirth.split("/")[2]
+        year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
+        year = self.reduce_value(year)
+        return year
+
+def plant_parameters(image, parameters, locations):
+    """
+    Plants the given parameters at the given locations in the image.
+
+    Args:
+        image: The image to plant the parameters in.
+        parameters: The parameters to plant.
+        locations: The locations to plant the parameters at.
+
+    Returns:
+        The image with the parameters planted.
+    """
+    fontPath = 'font/Roboto-Regular.ttf'
+    for parameter, location in zip(parameters, locations):
+
+        cv2.putText(image, str(parameter), location, cv2.FONT_HERSHEY_TRIPLEX, 0.5, (0, 0, 0), 1)
+
+    return image
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        firstName = request.form['firstName']
+        lastName = request.form['lastName']
+        dateOfBirth = request.form['dateOfBirth']
+
+        # ... בצע את כל החישובים על פי הקלט המתקבל מהמשתמש ...
+        person = Person(firstName, lastName, dateOfBirth)
+        head = (person.gethead())
+        calHead = (person.calculate_value(head))
+        hand = (person.gethand())
+        calHand = (person.calculate_value(hand))
+        legs = (person.getLegs())
+        calLegs = (person.calculate_value(legs))
+        rightLeg = (person.getRightLeg())
+        calRightLeg = (person.calculate_value(rightLeg))
+        spirala = (person.getSpirala())
+        calSpirala = (person.calculate_value(spirala))
+        # spirala2 = (person.getSpirala2())
+        leftLeg = (person.getLeftLeg())
+        calLeftLeg = (person.calculate_value(leftLeg))
+        firstPeak = (person.first_peak())
+        calFirsrtPeak = (person.calculate_value(firstPeak))
+        secondPeak = (person.second_peak())
+        calSecondPeak = (person.calculate_value(secondPeak))
+        thirdPeak = (person.third_peak())
+        calThirdPeak = (person.calculate_value(thirdPeak))
+        fourthPeak = (person.fourth_peak())
+        calFourthPeak = (person.calculate_value(fourthPeak))
+        firstPeriod = (person.first_period())
+        calFirsrtPeriod = (person.calculate_value(firstPeriod))
+        secondPeriod = (person.second_period())
+        calSecondPeriod = (person.calculate_value(secondPeriod))
+        thirdPeriod = (person.third_period())
+        calThirdPeriod = (person.calculate_value(thirdPeriod))
+        fourthPeriod = (person.fourth_period())
+        calFourthPeriod = (person.calculate_value(fourthPeriod))
+
+        print(
+            f"firstPeak: {calFirsrtPeak}, firstPeriod :{calFirsrtPeriod}, secondPeak: {calSecondPeak}, secondPeriod : {calSecondPeriod}, thirdPeak is: {calThirdPeak}, thirdPeriod is : {calThirdPeriod} , fourthPeak is: {calFourthPeak}, fourthPeriod is : {calFourthPeriod}")
+        # כאן יש קוד נוסף עם החישובים...
+        font_path = 'font/Roboto-Regular.ttf'  # הגדר את הנתיב לקובץ ה-ttf של הפונט
+        font_face = cv2.FONT_HERSHEY_COMPLEX
+        font_scale = 0.55
+        font_thickness = 1
+        image = cv2.imread("background.jpg")
+
+        #   הוספת הטקסטים לתמונה של מפה נומרולוגית
+        parameters = [calHead, calHand, calHand, calLegs, calRightLeg, calLeftLeg, calSpirala]
+        locations = [(290, 38), (509, 408), (70, 410), (283, 727), (540, 726), (25, 726), (312, 210)]
+        color = (0, 0, 0)  # צבע שחור
+
+
+
+        for parameter, location in zip(parameters, locations):
+            text = str(parameter)
+            position = location
+            cv2.putText(image, text, position, font_face, font_scale, color, font_thickness, cv2.LINE_AA, False)
+
+        image2 = cv2.imread("table.jpg")
+
+        #   הוספת הטקסטים לתמונה של מפה נומרולוגית
+        parameters2 = [calFirsrtPeriod, calFirsrtPeak, calSecondPeriod, calSecondPeak, calThirdPeriod, calThirdPeak,
+                      calFourthPeriod, calFourthPeak]
+        locations2 = [(447, 68), (275, 68), (447, 110), (275, 110), (447, 154), (276, 154), (447, 204), (276, 204)]
+        color = (0, 0, 0)  # צבע שחור
+
+
+        for parameter, location in zip(parameters2, locations2):
+            text = str(parameter)
+            position = location
+            cv2.putText(image2, text, position, font_face, font_scale, color, font_thickness, cv2.LINE_AA, False)
+
+        cv2.imwrite("static/result.jpg", image)
+        cv2.imwrite("static/result_table.jpg", image2)
+        return render_template('result.html')
+
+    return render_template('index.html')
+
+@app.route('/home')
+def home():
+    return redirect(url_for('index'))
+
+@app.route('/result')
+def show_result():
+    # החישובים והקוד המתאים ליצירת התמונה result.jpg
+    first_name = request.form['firstName']
+    last_name = request.form['lastName']
+    date_of_birth = request.form['dateOfBirth']
+    image_filename = 'static/result.jpg'
+    image_filename2 = 'static/result_table.jpg'
+    return render_template('result.html', image_filename=image_filename, image_filename2=image_filename2)
+    #return render_template('result.html', image_filename=image_filename, image_filename2=image_filename2, first_name=first_name, last_name=last_name, date_of_birth=date_of_birth)
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', debug=True)
