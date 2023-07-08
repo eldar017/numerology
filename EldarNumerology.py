@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Flask, render_template, redirect, url_for, request
 import cv2
 import time
@@ -285,6 +286,43 @@ class Person:
         year = self.reduce_value(year)
         return year
 
+    def personal_year(self):
+
+        # Assuming the date of birth is in the format "DD/MM/YYYY"
+        date_of_birth = self.dateofBirth
+
+        # Parse the date of birth string into a datetime object
+        dob = datetime.strptime(date_of_birth, "%d/%m/%Y")
+
+        # Get the current date
+        current_date = datetime.now()
+
+        # Compare the month and day of the date of birth with the current month and day
+        if (dob.month, dob.day) <= (current_date.month, current_date.day):
+            # The person has already celebrated their birthday this year
+            actual_years = current_date.year
+            actual_age = current_date.year - dob.year
+            print("Celebrated birthday in", current_date.year,"actual years: " ,actual_years,"(", actual_age, "years old)")
+        else:
+            # The person has not celebrated their birthday this year yet
+            actual_years = current_date.year -1
+            age_years = current_date.year - 1 - dob.year
+            print("Did not celebrate birthday in", current_date.year,"actual years: " ,actual_years, "(", age_years, "years old)")
+        total = actual_years + current_date.month
+        total = self.reduce_value(total)
+        return total
+
+    def personal_month(self):
+        date_of_birth = self.dateofBirth
+
+        # Parse the date of birth string into a datetime object
+        dob = datetime.strptime(date_of_birth, "%d/%m/%Y")
+
+        # Get the current date
+        current_date = datetime.now()
+
+
+
 def plant_parameters(image, parameters, locations):
     """
     Plants the given parameters at the given locations in the image.
@@ -342,9 +380,17 @@ def index():
         calThirdPeriod = (person.calculate_value(thirdPeriod))
         fourthPeriod = (person.fourth_period())
         calFourthPeriod = (person.calculate_value(fourthPeriod))
+        persoanlYears = (person.personal_year())
+        calPersonalYears = (person.calculate_value(persoanlYears))
+        persoanlMonth = (person.personal_Month())
+        calPersonalMonth = (person.calculate_value(persoanlMonth))
+        persoanlDay = (person.personal_day())
+        calPersonalDay = (person.calculate_value(persoanlDay))
+        persoanlAge = (person.personal_age())
+        calPersonalAge = (person.calculate_value(persoanlAge))
 
         print(
-            f"firstPeak: {calFirsrtPeak}, firstPeriod :{calFirsrtPeriod}, secondPeak: {calSecondPeak}, secondPeriod : {calSecondPeriod}, thirdPeak is: {calThirdPeak}, thirdPeriod is : {calThirdPeriod} , fourthPeak is: {calFourthPeak}, fourthPeriod is : {calFourthPeriod}")
+            f"firstPeak: {calFirsrtPeak}, firstPeriod :{calFirsrtPeriod}, secondPeak: {calSecondPeak}, secondPeriod : {calSecondPeriod}, thirdPeak is: {calThirdPeak}, thirdPeriod is : {calThirdPeriod} , fourthPeak is: {calFourthPeak}, fourthPeriod is : {calFourthPeriod}, personal_yaers is {calPersonalYears}")
         # כאן יש קוד נוסף עם החישובים...
         font_path = 'font/Roboto-Regular.ttf'  # הגדר את הנתיב לקובץ ה-ttf של הפונט
         font_face = cv2.FONT_HERSHEY_COMPLEX
