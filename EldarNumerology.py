@@ -79,6 +79,7 @@ class Person:
 
             else:
                 total = number
+            # total = self.reduce_value(total)
         return total
 
     def ncalc(self, word):
@@ -110,6 +111,7 @@ class Person:
         lname = self.ahviChar(self.lastName)
         lname = self.reduce(lname)
         total = fname + lname
+        total = self.reduce_value(total)
         return (total)
 
     def gethand(self):
@@ -117,6 +119,7 @@ class Person:
         lname = self.ncalc(self.lastName)
         lname = self.reduce(lname)
         total = fname + lname
+        total = self.reduce_value(total)
         return (total)
 
     def getWest(self):
@@ -132,6 +135,7 @@ class Person:
         lname = self.not_ahviChar(self.lastName)
         lname = self.reduce(lname)
         total = fname + lname
+        total = self.reduce_value(total)
         return (total)
 
     def getRightLeg(self):
@@ -161,6 +165,7 @@ class Person:
         year = self.reduce_value(year)
         total = int(day) + int(month) + int(year)
         # print(f"day is {int(day)}, month is : {int(month)}, years is: {int(year)}, total is : {total}")
+        total = self.reduce_value(total)
         return total
 
     def getSpirala2(self):
@@ -177,6 +182,7 @@ class Person:
         year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
         year = self.reduce_value(year)
         total = int(day) + int(month) + int(year)
+        total = self.reduce_value(total)
         return total
 
     def calculate_value(self, value):
@@ -184,6 +190,11 @@ class Person:
 
         if int(value) < 10:
             result = value
+        elif int(value) == 19:
+            for digit in str(value):
+                new_var += int(digit)
+            str_var = str(new_var)
+            result = f"{value}/{str_var[0]}"
         else:
             for digit in str(value):
                 new_var += int(digit)
@@ -213,12 +224,14 @@ class Person:
             month = month[1:]
         month = self.reduce_value(month)
         total = int(day) + int(month)
+        total = self.reduce_value(total)
         return total
 
     def first_period(self):
         month = self.dateofBirth.split("/")[1]
         if month[0] == "0":
             month = month[1:]
+        month = self.reduce_value(month)
         month = self.reduce_value(month)
         return month
 
@@ -231,6 +244,7 @@ class Person:
         year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
         year = self.reduce_value(year)
         total = int(day) + int(year)
+        total = self.reduce_value(total)
         return total
 
     def second_period(self):
@@ -242,6 +256,7 @@ class Person:
 
     def third_peak(self):
         total = self.reduce_value(self.first_peak()) + self.reduce_value(self.second_peak())
+        total = self.reduce_value(total)
         return total
 
     def third_period(self):
@@ -260,11 +275,13 @@ class Person:
         year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
         year = self.reduce_value(year)
         total = int(month) + int(year)
+        total = self.reduce_value(total)
         return total
 
     def fourth_period(self):
         year = self.dateofBirth.split("/")[2]
         year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
+        year = self.reduce_value(year)
         year = self.reduce_value(year)
         return year
 
@@ -337,7 +354,7 @@ def index():
 
         #   הוספת הטקסטים לתמונה של מפה נומרולוגית
         parameters = [calHead, calHand, calHand, calLegs, calRightLeg, calLeftLeg, calSpirala]
-        locations = [(290, 38), (509, 408), (70, 410), (283, 727), (540, 726), (25, 726), (312, 210)]
+        locations = [(290, 38), (509, 408), (70, 410), (283, 727), (540, 726), (25, 726), (320, 210)]
         color = (0, 0, 0)  # צבע שחור
 
 
