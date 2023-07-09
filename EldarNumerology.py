@@ -167,7 +167,8 @@ class Person:
         total = int(day) + int(month) + int(year)
         # print(f"day is {int(day)}, month is : {int(month)}, years is: {int(year)}, total is : {total}")
         total = self.reduce_value(total)
-        return total
+        self.spirala = total
+        return self.spirala
 
     def getSpirala2(self):
         """Return the number for the spirala ."""
@@ -375,20 +376,42 @@ class Person:
 
         # Parse the date of birth string into a datetime object
         dob = datetime.strptime(date_of_birth, "%d/%m/%Y")
-
         # Get the current date
+        self.firstAge = 36 - self.spirala
+        self.printFirstAge = f"0-{self.firstAge}"
         current_date = datetime.now()
         self.peron_day = self.peron_month + self.reduce_value(current_date.day)
         print(f"personal_day is : {self.peron_day}")
-        print(f"age is : {self.actual_age}")
+        print(f"first age is : {self.printFirstAge}")
         return self.reduce_value(self.peron_day)
 
     def personal_age(self):
         date_of_birth = self.dateofBirth
         dob = datetime.strptime(date_of_birth, "%d/%m/%Y")
         current_date = datetime.now()
-        self.actual_age = current_date.year - dob.year
+        # self.actual_age = current_date.year - dob.year
         return self.actual_age
+
+    def first_age(self):
+        self.firstAge = 36 - self.spirala
+        self.printFirstAge = f"0-{self.firstAge}"
+        print(self.printFirstAge)
+        return self.printFirstAge
+
+    def second_age(self):
+        self.secondAge = int(self.firstAge)+9
+        self.printSecondAge = f"{self.firstAge}-{self.secondAge}"
+        return self.printSecondAge
+
+    def third_age(self):
+        self.thirdAge = int(self.secondAge) + 9
+        self.printThirdAge = f"{self.secondAge}-{self.thirdAge}"
+        return self.printThirdAge
+
+    def fourth_age(self):
+        self.fourthAge = 120
+        self.printFourthAge = f"{self.thirdAge}-{self.fourthAge}"
+        return self.printFourthAge
 
 def plant_parameters(image, parameters, locations):
     """
@@ -455,7 +478,10 @@ def index():
         calThirdChallenge = (person.calculate_challenge(thirdChallenge))
         fourthChallenge = (person.fourth_challenge())
         calFourthChallenge = (person.calculate_challenge(fourthChallenge))
-
+        calFirstAge = (person.first_age())
+        calSecondAge = (person.second_age())
+        calThirdAge = (person.third_age())
+        calFourthAge = (person.fourth_age())
         persoanlYears = (person.personal_year())
         calPersonalYears = (person.calculate_value(persoanlYears))
         persoanlMonth = (person.personal_month())
@@ -489,9 +515,9 @@ def index():
         image2 = cv2.imread("table.jpg")
 
         #   הוספת הטקסטים לתמונה של מפה נומרולוגית
-        parameters2 = [calFirsrtPeriod, calFirsrtPeak, calSecondPeriod, calSecondPeak, calThirdPeriod, calThirdPeak,
+        parameters2 = [calFirstAge, calSecondAge, calThirdAge, calFourthAge, calFirsrtPeriod, calFirsrtPeak, calSecondPeriod, calSecondPeak, calThirdPeriod, calThirdPeak,
                       calFourthPeriod, calFourthPeak, calFirstChallenge, calSecondChallenge, calThirdChallenge, calFourthChallenge,calPersonalYears, calPersonalMonth, calPersonalDay, calPersoanlAge]
-        locations2 = [(447, 68), (275, 68), (447, 110), (275, 110), (447, 154), (276, 154), (447, 204), (276, 204), (87, 68), (87, 110), (87, 150), (87, 190), (424, 282), (424, 316), (424, 352), (424, 386)  ]
+        locations2 = [(667, 68), (667, 110), (667, 154), (667, 204), (447, 68), (275, 68), (447, 110), (275, 110), (447, 154), (276, 154), (447, 204), (276, 204), (87, 68), (87, 110), (87, 150), (87, 190), (374, 272), (374, 306), (374, 332), (374, 376)  ]
         color = (0, 0, 0)  # צבע שחור
 
 
