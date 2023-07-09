@@ -156,14 +156,14 @@ class Person:
         day = self.dateofBirth.split("/")[0]
         if day[0] == "0":
             day = day[1:]
-        day = self.reduce_value(day)
+        self.day = self.reduce_value(day)
         month = self.dateofBirth.split("/")[1]
         if month[0] == "0":
             month = month[1:]
-        month = self.reduce_value(month)
+        self.month = self.reduce_value(month)
         year = self.dateofBirth.split("/")[2]
         year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
-        year = self.reduce_value(year)
+        self.year = self.reduce_value(year)
         total = int(day) + int(month) + int(year)
         # print(f"day is {int(day)}, month is : {int(month)}, years is: {int(year)}, total is : {total}")
         total = self.reduce_value(total)
@@ -200,6 +200,13 @@ class Person:
             for digit in str(value):
                 new_var += int(digit)
             result = f"{value}/{new_var}"
+        return result
+
+    def calculate_challenge(self, value):
+        new_var = 0
+        for digit in str(value):
+            new_var += int(digit)
+        result = new_var
         return result
 
     def reduce_value(self, value):
@@ -286,10 +293,48 @@ class Person:
         year = self.reduce_value(year)
         return year
 
+    def first_challenge(self):
+        if(self.month > self.day):
+            self.first_chal = self.month - self.day
+        else:
+            self.first_chal = self.day - self.month
+        self.first_chal = self.reduce_value(self.first_chal)
+
+        return self.first_chal
+
+    def second_challenge(self):
+        if(self.year > self.day):
+            self.second_chal = self.year - self.day
+        else:
+            self.second_chal = self.day - self.year
+        self.second_chal = self.reduce_value(self.second_chal)
+
+        return self.second_chal
+
+    def third_challenge(self):
+        if(self.first_chal > self.second_chal):
+            self.third_chal = self.first_chal - self.second_chal
+        else:
+            self.third_chal = self.second_chal - self.first_chal
+        self.third_chal = self.reduce_value(self.third_chal)
+
+        return self.third_chal
+
+    def fourth_challenge(self):
+        if (self.year > self.month):
+            self.fourth_chal = self.year - self.month
+        else:
+            self.fourth_chal = self.month - self.year
+        self.fourth_chal = self.reduce_value(self.fourth_chal)
+
+        return self.fourth_chal
+
+
     def personal_year(self):
 
         # Assuming the date of birth is in the format "DD/MM/YYYY"
         date_of_birth = self.dateofBirth
+
 
         # Parse the date of birth string into a datetime object
         dob = datetime.strptime(date_of_birth, "%d/%m/%Y")
@@ -301,16 +346,17 @@ class Person:
         if (dob.month, dob.day) <= (current_date.month, current_date.day):
             # The person has already celebrated their birthday this year
             actual_years = current_date.year
-            actual_age = current_date.year - dob.year
-            print("Celebrated birthday in", current_date.year,"actual years: " ,actual_years,"(", actual_age, "years old)")
+            self.actual_age = current_date.year - dob.year
+            print("Celebrated birthday in", current_date.year,"actual years: " ,actual_years,"(", self.actual_age, "years old)")
         else:
             # The person has not celebrated their birthday this year yet
             actual_years = current_date.year -1
-            age_years = current_date.year - 1 - dob.year
-            print("Did not celebrate birthday in", current_date.year,"actual years: " ,actual_years, "(", age_years, "years old)")
-        total = actual_years + current_date.month
-        total = self.reduce_value(total)
-        return total
+            self.actual_age = current_date.year - 1 - dob.year
+            print("Did not celebrate birthday in", current_date.year,"actual years: " ,actual_years, "(", self.actual_age, "years old)")
+        # total = actual_years + current_date.month
+        self.peron_year = self.reduce_value(actual_years) + self.month + self.day
+        print(f"personal_year is : {self.peron_year}")
+        return self.peron_year
 
     def personal_month(self):
         date_of_birth = self.dateofBirth
@@ -320,8 +366,29 @@ class Person:
 
         # Get the current date
         current_date = datetime.now()
+        self.peron_month = self.peron_year + self.reduce_value(current_date.month)
+        print(f"personal_month is : {self.peron_month}")
+        return self.reduce_value(self.peron_month)
 
+    def personal_day(self):
+        date_of_birth = self.dateofBirth
 
+        # Parse the date of birth string into a datetime object
+        dob = datetime.strptime(date_of_birth, "%d/%m/%Y")
+
+        # Get the current date
+        current_date = datetime.now()
+        self.peron_day = self.peron_month + self.reduce_value(current_date.day)
+        print(f"personal_day is : {self.peron_day}")
+        print(f"age is : {self.actual_age}")
+        return self.reduce_value(self.peron_day)
+
+    def personal_age(self):
+        date_of_birth = self.dateofBirth
+        dob = datetime.strptime(date_of_birth, "%d/%m/%Y")
+        current_date = datetime.now()
+        self.actual_age = current_date.year - dob.year
+        return self.actual_age
 
 def plant_parameters(image, parameters, locations):
     """
@@ -380,14 +447,23 @@ def index():
         calThirdPeriod = (person.calculate_value(thirdPeriod))
         fourthPeriod = (person.fourth_period())
         calFourthPeriod = (person.calculate_value(fourthPeriod))
+        firstChallenge = (person.first_challenge())
+        calFirstChallenge = (person.calculate_challenge(firstChallenge))
+        secondChallenge = (person.second_challenge())
+        calSecondChallenge = (person.calculate_challenge(secondChallenge))
+        thirdChallenge = (person.third_challenge())
+        calThirdChallenge = (person.calculate_challenge(thirdChallenge))
+        fourthChallenge = (person.fourth_challenge())
+        calFourthChallenge = (person.calculate_challenge(fourthChallenge))
+
         persoanlYears = (person.personal_year())
         calPersonalYears = (person.calculate_value(persoanlYears))
-        persoanlMonth = (person.personal_Month())
+        persoanlMonth = (person.personal_month())
         calPersonalMonth = (person.calculate_value(persoanlMonth))
         persoanlDay = (person.personal_day())
         calPersonalDay = (person.calculate_value(persoanlDay))
-        persoanlAge = (person.personal_age())
-        calPersonalAge = (person.calculate_value(persoanlAge))
+        calPersoanlAge = (person.personal_age())
+        # calPersonalAge = (person.calculate_value(self.actual_age))
 
         print(
             f"firstPeak: {calFirsrtPeak}, firstPeriod :{calFirsrtPeriod}, secondPeak: {calSecondPeak}, secondPeriod : {calSecondPeriod}, thirdPeak is: {calThirdPeak}, thirdPeriod is : {calThirdPeriod} , fourthPeak is: {calFourthPeak}, fourthPeriod is : {calFourthPeriod}, personal_yaers is {calPersonalYears}")
@@ -414,8 +490,8 @@ def index():
 
         #   הוספת הטקסטים לתמונה של מפה נומרולוגית
         parameters2 = [calFirsrtPeriod, calFirsrtPeak, calSecondPeriod, calSecondPeak, calThirdPeriod, calThirdPeak,
-                      calFourthPeriod, calFourthPeak]
-        locations2 = [(447, 68), (275, 68), (447, 110), (275, 110), (447, 154), (276, 154), (447, 204), (276, 204)]
+                      calFourthPeriod, calFourthPeak, calFirstChallenge, calSecondChallenge, calThirdChallenge, calFourthChallenge,calPersonalYears, calPersonalMonth, calPersonalDay, calPersoanlAge]
+        locations2 = [(447, 68), (275, 68), (447, 110), (275, 110), (447, 154), (276, 154), (447, 204), (276, 204), (87, 68), (87, 110), (87, 150), (87, 190), (424, 282), (424, 316), (424, 352), (424, 386)  ]
         color = (0, 0, 0)  # צבע שחור
 
 
