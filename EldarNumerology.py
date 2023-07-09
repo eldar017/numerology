@@ -206,7 +206,7 @@ class Person:
         new_var = 0
         for digit in str(value):
             new_var += int(digit)
-        result = new_var
+        result = -new_var
         return result
 
     def reduce_value(self, value):
