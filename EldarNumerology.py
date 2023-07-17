@@ -1,6 +1,7 @@
 from datetime import datetime
 from flask import Flask, render_template, redirect, url_for, request
 import cv2
+import sys
 import time
 from fontTools.ttLib import TTFont
 import numpy as np
@@ -108,7 +109,7 @@ class Person:
     def gethead(self):
         """ Retuen the numeric value of the head"""
         fname = self.ahviChar(self.firstName)
-        fname = self.reduce(fname)
+        # fname = self.reduce(fname)
         lname = self.ahviChar(self.lastName)
         lname = self.reduce(lname)
         total = fname + lname
@@ -117,6 +118,7 @@ class Person:
 
     def gethand(self):
         fname = self.ncalc(self.firstName)
+        self.fname = self.reduce(fname)
         lname = self.ncalc(self.lastName)
         lname = self.reduce(lname)
         total = fname + lname
@@ -151,6 +153,30 @@ class Person:
         total = int(self.reduce_value(self.getSpirala())) + int(self.reduce_value(self.gethand()))
         return total
 
+    def getHeart(self):
+        """Return the number for the right legs ."""
+        spirala = self.reduce_value(self.getSpirala())
+        spirala = self.getCrematic(spirala)
+        hand = self.reduce_value(self.gethand())
+        hand = self.getCrematic(hand)
+        if(spirala > hand):
+            total = int(spirala) - int(hand)
+        else:
+            total = int(hand) - int(spirala)
+        return total
+
+    def getCrematic(self, value):
+        new_var = 0
+        if value == 11 or value == 22 or value == 13 or value == 14 or value == 16 or value == 19 or value == 33:
+            for digit in str(value):
+                new_var += int(digit)
+            value = str(new_var)
+        else:
+            for digit in str(value):
+                new_var += int(digit)
+            value = str(new_var)
+        return value
+
     def getSpirala(self):
         """Return the number for the spirala ."""
         day = self.dateofBirth.split("/")[0]
@@ -164,10 +190,11 @@ class Person:
         year = self.dateofBirth.split("/")[2]
         year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
         self.year = self.reduce_value(year)
-        total = int(day) + int(month) + int(year)
+        total = int(self.day) + int(self.month) + int(self.year)
         # print(f"day is {int(day)}, month is : {int(month)}, years is: {int(year)}, total is : {total}")
         total = self.reduce_value(total)
         self.spirala = total
+        # print(total)
         return self.spirala
 
     def getSpirala2(self):
@@ -355,7 +382,7 @@ class Person:
             self.actual_age = current_date.year - 1 - dob.year
             print("Did not celebrate birthday in", current_date.year,"actual years: " ,actual_years, "(", self.actual_age, "years old)")
         # total = actual_years + current_date.month
-        self.peron_year = self.reduce_value(actual_years) + self.month + self.day
+        self.peron_year = self.reduce_value(actual_years) + self.reduce_value(self.month) + self.reduce_value(self.day)
         print(f"personal_year is : {self.peron_year}")
         return self.peron_year
 
@@ -380,7 +407,7 @@ class Person:
         self.firstAge = 36 - self.spirala
         self.printFirstAge = f"0-{self.firstAge}"
         current_date = datetime.now()
-        self.peron_day = self.peron_month + self.reduce_value(current_date.day)
+        self.peron_day = self.reduce_value(self.peron_month) + self.reduce_value(current_date.day)
         print(f"personal_day is : {self.peron_day}")
         print(f"first age is : {self.printFirstAge}")
         return self.reduce_value(self.peron_day)
@@ -412,6 +439,45 @@ class Person:
         self.fourthAge = 120
         self.printFourthAge = f"{self.thirdAge}-{self.fourthAge}"
         return self.printFourthAge
+
+    def _firstName(self):
+        print(f"first name number is:{self.fname}")
+        return self.fname
+
+    def dayofBirth(self):
+        return self.day
+
+    def astrologia(self):
+        day = self.dateofBirth.split("/")[0]
+        month = self.dateofBirth.split("/")[1]
+        astro_sign = ''
+        if month == '12':
+            astro_sign = 'Sagittarius' if (int(day) < 22) else 'capricorn'
+        elif month == '01':
+            astro_sign = 'Capricorn' if (int(day) < 20) else 'aquarius'
+        elif month == '02':
+            astro_sign = 'Aquarius' if (int(day) < 19) else 'pisces'
+        elif month == '03':
+            astro_sign = 'Pisces' if (int(day) < 21) else 'aries'
+        elif month == '04':
+            astro_sign = 'Aries' if (int(day) < 20) else 'Taurus'
+        elif month == '05':
+            astro_sign = 'Taurus' if (int(day) < 21) else 'Gemini'
+        elif month == '06':
+            astro_sign = 'Gemini' if (int(day) < 21) else 'Cancer'
+        elif month == '07':
+            astro_sign = 'Cancer' if (int(day) < 23) else 'Leo'
+        elif month == '08':
+            astro_sign = 'Leo' if (int(day) < 23) else 'Virgo'
+        elif month == '09':
+            astro_sign = 'Virgo' if (int(day) < 23) else 'Libra'
+        elif month == '10':
+            astro_sign = 'Libra' if (int(day) < 23) else 'scorpio'
+        elif month == '11':
+            astro_sign = 'scorpio' if (int(day) < 22) else 'Sagittarius'
+        # print(astro_sign)
+        print("Your Astrological sign is :", astro_sign)
+        return astro_sign
 
 def plant_parameters(image, parameters, locations):
     """
@@ -451,7 +517,8 @@ def index():
         calRightLeg = (person.calculate_value(rightLeg))
         spirala = (person.getSpirala())
         calSpirala = (person.calculate_value(spirala))
-        # spirala2 = (person.getSpirala2())
+        hearth = (person.getHeart())
+        calHearth = (person.calculate_value(hearth))
         leftLeg = (person.getLeftLeg())
         calLeftLeg = (person.calculate_value(leftLeg))
         firstPeak = (person.first_peak())
@@ -489,6 +556,11 @@ def index():
         persoanlDay = (person.personal_day())
         calPersonalDay = (person.calculate_value(persoanlDay))
         calPersoanlAge = (person.personal_age())
+        firstName =   (person._firstName())
+        calFirstName = (person.calculate_value(firstName))
+        dayOfBirth = (person.dayofBirth())
+        calDayOfBirth = (person.calculate_value(dayOfBirth))
+        calAstrology = (person.astrologia())
         # calPersonalAge = (person.calculate_value(self.actual_age))
 
         print(
@@ -496,13 +568,14 @@ def index():
         # כאן יש קוד נוסף עם החישובים...
         font_path = 'font/Roboto-Regular.ttf'  # הגדר את הנתיב לקובץ ה-ttf של הפונט
         font_face = cv2.FONT_HERSHEY_COMPLEX
+        # font_face = cv2.FONT_HERSHEY_SCRIPT_SIMPLEX
         font_scale = 0.55
         font_thickness = 1
         image = cv2.imread("background.jpg")
 
         #   הוספת הטקסטים לתמונה של מפה נומרולוגית
-        parameters = [calHead, calHand, calHand, calLegs, calRightLeg, calLeftLeg, calSpirala]
-        locations = [(290, 38), (509, 408), (70, 410), (283, 727), (540, 726), (25, 726), (320, 210)]
+        parameters = [calHead, calHand, calHand, calLegs, calRightLeg, calLeftLeg, calHearth, calSpirala]
+        locations = [(290, 38), (509, 408), (70, 410), (283, 727), (540, 726), (25, 726), (320, 210), (300, 298)]
         color = (0, 0, 0)  # צבע שחור
 
 
@@ -526,8 +599,25 @@ def index():
             position = location
             cv2.putText(image2, text, position, font_face, font_scale, color, font_thickness, cv2.LINE_AA, False)
 
+
+        ############
+        image3 = cv2.imread("params.jpg")
+
+        #   הוספת הטקסטים לתמונה של מפה נומרולוגית
+        parameters3 = [calFirstName, calDayOfBirth, calAstrology]
+        locations3 = [(86, 33), (86, 82), (86, 136)]
+        color = (0, 0, 0)  # צבע שחור
+
+        for parameter, location in zip(parameters3, locations3):
+
+            text = str(parameter)
+            position = location
+            cv2.putText(image3, text, position, font_face, font_scale, color, font_thickness, cv2.LINE_AA, False)
+        ############
+
         cv2.imwrite("static/result.jpg", image)
         cv2.imwrite("static/result_table.jpg", image2)
+        cv2.imwrite("static/param_table.jpg", image3)
         return render_template('result.html')
 
     return render_template('index.html')
