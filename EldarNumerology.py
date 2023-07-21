@@ -3,6 +3,7 @@ from flask import Flask, render_template, redirect, url_for, request
 import cv2
 import sys
 import time
+from PIL import Image, ImageDraw, ImageFont
 from fontTools.ttLib import TTFont
 import numpy as np
 
@@ -452,29 +453,29 @@ class Person:
         month = self.dateofBirth.split("/")[1]
         astro_sign = ''
         if month == '12':
-            astro_sign = 'Sagittarius' if (int(day) < 22) else 'capricorn'
+            astro_sign = 'תשק' if (int(day) < 22) else 'ידג'
         elif month == '01':
-            astro_sign = 'Capricorn' if (int(day) < 20) else 'aquarius'
+            astro_sign = 'ידג' if (int(day) < 20) else 'ילד'
         elif month == '02':
-            astro_sign = 'Aquarius' if (int(day) < 19) else 'pisces'
+            astro_sign = 'ילד' if (int(day) < 19) else 'םיגד'
         elif month == '03':
-            astro_sign = 'Pisces' if (int(day) < 21) else 'aries'
+            astro_sign = 'םיגד' if (int(day) < 21) else 'הלט'
         elif month == '04':
-            astro_sign = 'Aries' if (int(day) < 20) else 'Taurus'
+            astro_sign = 'הלט' if (int(day) < 20) else 'רוש'
         elif month == '05':
-            astro_sign = 'Taurus' if (int(day) < 21) else 'Gemini'
+            astro_sign = 'רוש' if (int(day) < 21) else 'םימואת'
         elif month == '06':
-            astro_sign = 'Gemini' if (int(day) < 21) else 'Cancer'
+            astro_sign = 'םימואת' if (int(day) < 21) else 'ןטרס'
         elif month == '07':
-            astro_sign = 'Cancer' if (int(day) < 23) else 'Leo'
+            astro_sign = 'ןטרס' if (int(day) < 23) else 'הירא'
         elif month == '08':
-            astro_sign = 'Leo' if (int(day) < 23) else 'Virgo'
+            astro_sign = 'הירא' if (int(day) < 23) else 'הלותב'
         elif month == '09':
-            astro_sign = 'Virgo' if (int(day) < 23) else 'Libra'
+            astro_sign = 'הלותב' if (int(day) < 23) else 'םיינזאמ'
         elif month == '10':
-            astro_sign = 'Libra' if (int(day) < 23) else 'scorpio'
+            astro_sign = 'םיינזאמ' if (int(day) < 23) else 'ברקע'
         elif month == '11':
-            astro_sign = 'scorpio' if (int(day) < 22) else 'Sagittarius'
+            astro_sign = 'ברקע' if (int(day) < 22) else 'תשק'
         # print(astro_sign)
         print("Your Astrological sign is :", astro_sign)
         return astro_sign
@@ -566,6 +567,7 @@ def index():
         print(
             f"firstPeak: {calFirsrtPeak}, firstPeriod :{calFirsrtPeriod}, secondPeak: {calSecondPeak}, secondPeriod : {calSecondPeriod}, thirdPeak is: {calThirdPeak}, thirdPeriod is : {calThirdPeriod} , fourthPeak is: {calFourthPeak}, fourthPeriod is : {calFourthPeriod}, personal_yaers is {calPersonalYears}")
         # כאן יש קוד נוסף עם החישובים...
+
         font_path = 'font/Roboto-Regular.ttf'  # הגדר את הנתיב לקובץ ה-ttf של הפונט
         font_face = cv2.FONT_HERSHEY_COMPLEX
         # font_face = cv2.FONT_HERSHEY_SCRIPT_SIMPLEX
@@ -576,7 +578,7 @@ def index():
         #   הוספת הטקסטים לתמונה של מפה נומרולוגית
         parameters = [calHead, calHand, calHand, calLegs, calRightLeg, calLeftLeg, calHearth, calSpirala]
         locations = [(290, 38), (509, 408), (70, 410), (283, 727), (540, 726), (25, 726), (320, 210), (300, 298)]
-        color = (0, 0, 0)  # צבע שחור
+        color = (100, 255, 100)  # צבע שחור
 
 
 
@@ -602,22 +604,35 @@ def index():
 
         ############
         image3 = cv2.imread("params.jpg")
+        image_path = 'params.jpg'
+        image3 = cv2.imread(image_path)
 
+        # Define the font properties for Hebrew text
+        font_path = 'font/Lunasima-Regular.ttf'
+        font_size = 20
+        font_color = (0, 0, 0)
         #   הוספת הטקסטים לתמונה של מפה נומרולוגית
         parameters3 = [calFirstName, calDayOfBirth, calAstrology]
         locations3 = [(86, 33), (86, 82), (86, 136)]
         color = (0, 0, 0)  # צבע שחור
+        pil_image = Image.fromarray(cv2.cvtColor(image3, cv2.COLOR_BGR2RGB))
+        font = ImageFont.truetype(font_path, font_size)
+        draw = ImageDraw.Draw(pil_image)
 
         for parameter, location in zip(parameters3, locations3):
 
             text = str(parameter)
             position = location
-            cv2.putText(image3, text, position, font_face, font_scale, color, font_thickness, cv2.LINE_AA, False)
+            draw.text(position, text, font=font, fill=font_color)
         ############
+        cv_image = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
+        output_path = 'static/param_table.jpg'
+
 
         cv2.imwrite("static/result.jpg", image)
         cv2.imwrite("static/result_table.jpg", image2)
-        cv2.imwrite("static/param_table.jpg", image3)
+        cv2.imwrite(output_path, cv_image)
+        # cv2.imwrite("static/param_table.jpg", image3)
         return render_template('result.html')
 
     return render_template('index.html')
