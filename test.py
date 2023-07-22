@@ -13,7 +13,7 @@ def onclick(event):
         plt.draw()
 
 # טען את התמונה
-image = cv2.imread('table.jpg')
+image = cv2.imread('params.jpg')
 
 # הצג את התמונה בעזרת Matplotlib
 fig, ax = plt.subplots()
