@@ -1,0 +1,8 @@
+version: '3.7'
+services:
+  numerology:
+    image: eldar017/eldar_numerology:1.0.2
+    container_name: numerology
+    ports:
+      - 5001:5000
+    restart: always

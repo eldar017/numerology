@@ -557,8 +557,9 @@ def index():
         persoanlDay = (person.personal_day())
         calPersonalDay = (person.calculate_value(persoanlDay))
         calPersoanlAge = (person.personal_age())
-        firstName =   (person._firstName())
+        firstName = (person._firstName())
         calFirstName = (person.calculate_value(firstName))
+
         dayOfBirth = (person.dayofBirth())
         calDayOfBirth = (person.calculate_value(dayOfBirth))
         calAstrology = (person.astrologia())
@@ -578,7 +579,7 @@ def index():
         #   הוספת הטקסטים לתמונה של מפה נומרולוגית
         parameters = [calHead, calHand, calHand, calLegs, calRightLeg, calLeftLeg, calHearth, calSpirala]
         locations = [(290, 38), (509, 408), (70, 410), (283, 727), (540, 726), (25, 726), (320, 210), (300, 298)]
-        color = (100, 255, 100)  # צבע שחור
+        color = (100, 255, 10)  # צבע שחור
 
 
 
