@@ -251,6 +251,14 @@ class Person:
             result = new_var
         return result
 
+    def sum_value(self, value):
+        val = self.reduce(value)
+        new_var = 0
+        for digit in str(val):
+            new_var += int(digit)
+        result = new_var
+        return result
+
     def first_peak(self):
         day = self.dateofBirth.split("/")[0]
         if day[0] == "0":
@@ -421,7 +429,8 @@ class Person:
         return self.actual_age
 
     def first_age(self):
-        self.firstAge = 36 - self.spirala
+        self.firstAge = 36 - self.sum_value(self.spirala)
+        print(f"*****{self.sum_value(self.spirala)}")
         self.printFirstAge = f"0-{self.firstAge}"
         print(self.printFirstAge)
         return self.printFirstAge
