@@ -391,7 +391,8 @@ class Person:
             self.actual_age = current_date.year - 1 - dob.year
             print("Did not celebrate birthday in", current_date.year,"actual years: " ,actual_years, "(", self.actual_age, "years  old)")
         # total = actual_years + current_date.month
-        self.peron_year = self.reduce_value(actual_years) + self.reduce_value(self.month) + self.reduce_value(self.day)
+        #self.peron_year = self.reduce_value(actual_years) + self.reduce_value(self.month) + self.reduce_value(self.day)
+        self.peron_year = self.reduce_value(actual_years) + self.reduce_value(self.first_peak())
         print(f"personal_year is : {self.peron_year}")
         return self.peron_year
 
