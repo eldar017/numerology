@@ -588,15 +588,25 @@ def index():
 
         #   הוספת הטקסטים לתמונה של מפה נומרולוגית
         parameters = [calHead, calHand, calHand, calLegs, calRightLeg, calLeftLeg, calHearth, calSpirala]
-        locations = [(290, 38), (509, 408), (70, 410), (283, 727), (540, 726), (25, 726), (320, 210), (300, 298)]
-        color = (100, 255, 10)  # צבע שחור
+        locations = [(290, 38), (509, 408), (70, 410), (283, 727), (540, 726), (25, 726), (320, 210), (285, 298)]
+        color = (0, 0, 0)  # צבע שחור
 
 
 
         for parameter, location in zip(parameters, locations):
-            text = str(parameter)
-            position = location
-            cv2.putText(image, text, position, font_face, font_scale, color, font_thickness, cv2.LINE_AA, False)
+            if location == (285, 298):
+                # print("&&&&&&&&&&&&&&&")
+                print(location)
+                color = (90, 255, 10)
+                font_scale = 0.65
+                text = str(parameter)
+                position = location
+                cv2.putText(image, text, position, font_face, font_scale, color, font_thickness, cv2.LINE_AA, False)
+            else:
+                font_scale = 0.55
+                text = str(parameter)
+                position = location
+                cv2.putText(image, text, position, font_face, font_scale, color, font_thickness, cv2.LINE_AA, False)
 
         image2 = cv2.imread("table.jpg")
 
@@ -608,6 +618,7 @@ def index():
 
 
         for parameter, location in zip(parameters2, locations2):
+            font_scale = 0.55
             text = str(parameter)
             position = location
             cv2.putText(image2, text, position, font_face, font_scale, color, font_thickness, cv2.LINE_AA, False)
