@@ -135,9 +135,9 @@ class Person:
     def getLegs(self):
         """Return the number for the legs part of cross."""
         fname = self.not_ahviChar(self.firstName)
-        fname = self.reduce(fname)
+        fname = self.reduce_value(fname)
         lname = self.not_ahviChar(self.lastName)
-        lname = self.reduce(lname)
+        lname = self.reduce_value(lname)
         total = fname + lname
         total = self.reduce_value(total)
         return (total)
@@ -239,7 +239,9 @@ class Person:
         return result
 
     def reduce_value(self, value):
-        val = self.reduce(value)
+        # val = self.reduce(value)
+        val = int(value)
+        # print(f"reduce_value val is {val}, value is {value}")
         new_var = 0
         if val == 11 or val == 22 or val == 13 or val == 14 or val == 16 or val == 19 or val == 33:
             result = val
