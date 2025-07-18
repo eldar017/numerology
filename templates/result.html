@@ -18,17 +18,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>המפה הנומרולוגית</title>
-  <link rel="stylesheet" type="text/css" href="static/styles.css">
+    <title>המפה הנומרולוגית</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <meta charset="UTF-8">
+    <style>
+        body {
+            background: #f7f7fa;
+            font-family: 'Lunasima-Regular', 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .result-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px 0 #0001;
+            padding: 32px 24px 24px 24px;
+            text-align: center;
+        }
+        h1 {
+            color: #3a3a3a;
+            margin-bottom: 24px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .result-img {
+            width: 90%;
+            max-width: 400px;
+            border-radius: 12px;
+            margin-bottom: 18px;
+            box-shadow: 0 2px 8px 0 #0002;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-top: 24px;
+            padding: 10px 32px;
+            background: linear-gradient(90deg, #6a82fb 0%, #fc5c7d 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .back-btn:hover {
+            background: linear-gradient(90deg, #fc5c7d 0%, #6a82fb 100%);
+        }
+    </style>
 </head>
 <body>
-  <h1><center>המפה הנומרולוגית</center></h1>
-<!--  <h2>תוצאות:</h2>-->
-<!--  <p>שם פרטי: {{ first_name }}</p>-->
-<!--  <p>שם משפחה: {{ last_name }}</p>-->
-<!--  <p>תאריך לידה: {{ date_of_birth }}</p>-->
-  <img src="static/result.jpg" alt="תמונת תוצאה">
-  <img src="static/result_table.jpg" alt="תמונת טבלה של תוצאות">
-  <a href="/">חזור למסך הראשי</a>
+    <div class="result-container">
+        <h1>המפה הנומרולוגית</h1>
+        <div style="margin-bottom: 24px;">
+            {% if image %}
+                <div style="background: #f3f6fa; border-radius: 16px; box-shadow: 0 2px 12px #0001; padding: 18px; display: inline-block; border: 2px solid #e0e0e0;">
+                    <img class="result-img" src="/{{ image }}" alt="מפה נומרולוגית" style="margin-bottom: 0;">
+                    <div style="font-size: 1.1em; color: #444; margin-top: 8px;">המפה האישית שלך</div>
+                </div>
+            {% endif %}
+        </div>
+        <div style="margin-bottom: 24px;">
+            <h2 style="font-size: 1.2em; color: #6a82fb; margin-bottom: 10px;">טבלת תוצאה</h2>
+            <img class="result-img" src="/static/result_table.jpg" alt="טבלת תוצאה">
+        </div>
+        <div style="margin-bottom: 24px;">
+            <h2 style="font-size: 1.2em; color: #6a82fb; margin-bottom: 10px;">טבלת ערכים</h2>
+            <img class="result-img" src="/static/param_table.jpg" alt="טבלת ערכים">
+        </div>
+        <a class="back-btn" href="/">חזור למסך הראשי</a>
+    </div>
 </body>
 </html>

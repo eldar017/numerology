@@ -8,9 +8,12 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def generate_image():
     if request.method == 'POST':
-        firstName = request.form.get('firstName')
-        lastName = request.form.get('lastName')
-        dateofBirth = request.form.get('dateofBirth')
+        firstName = request.form.get('firstName', '').strip().replace(' ', '')
+        lastName = request.form.get('lastName', '').strip().replace(' ', '')
+        birthDay = request.form.get('birthDay')
+        birthMonth = request.form.get('birthMonth')
+        birthYear = request.form.get('birthYear')
+        dateofBirth = f"{birthDay.zfill(2)}/{birthMonth.zfill(2)}/{birthYear}"
 
         # הוסף את כל הקוד של המחלקה Person כאן
         class Person:
@@ -18,6 +21,7 @@ def generate_image():
             def __init__(self, firstName, lastName, dateofBirth):
                 self.firstName = firstName
                 self.lastName = lastName
+                self.dateofBirth = dateofBirth
                 self.calcTable = {'א': 1, 'י': 1, 'ק': 1, 'ב': 2, 'כ': 2, 'ך': 2, 'ר': 2, 'ג': 3, 'ל': 3, 'ף': 3,
                                   'ש': 3, 'ד': 4, 'מ': 4, 'ם': 4, 'ת': 4, 'ה': 5, 'נ': 5, 'ן': 5, 'ו': 6, 'ס': 6, 'ז': 7,
                                   'ע': 7,
@@ -62,8 +66,8 @@ def generate_image():
                         value = self.calcTable[letter]
                         total += value
                     else:
-                        raise KeyError(f"The letter {letter} is not in the calcTable dictionary.")
-
+                        # דלג על תווים לא חוקיים (כמו רווחים, תווים זרים וכו')
+                        continue
                 return total
 
             def reduce(self, number):
@@ -147,13 +151,12 @@ def generate_image():
             def getRightLeg(self):
                 """Return the number for the right legs ."""
                 try:
-                    birth_date = datetime.strptime(dateofBirth, "%d/%m/%Y")
+                    birth_date = datetime.strptime(self.dateofBirth, "%d/%m/%Y")
                     day = birth_date.day
                 except ValueError:
-                    # תאפשר טיפול בתקלה של תבנית תאריך שגויה כאן
-                    day = None  # או ערך ברירת מחדל אחר שתבחר
-                print(f"{birth_date}")
-                day = birth_date.split("/")[0]
+                    day = None
+                print(f"{self.dateofBirth}")
+                day = self.dateofBirth.split("/")[0]
                 if day[0] == "0":
                     day = day[1:]
                 return day
@@ -174,20 +177,17 @@ def generate_image():
 
             def getSpirala(self):
                 """Return the number for the spirala ."""
-                day = dateofBirth.split("/")[0]
+                day = self.dateofBirth.split("/")[0]
                 if day[0] == "0":
                     day = day[1:]
-                month = dateofBirth.split("/")[1]
+                month = self.dateofBirth.split("/")[1]
                 if month[0] == "0":
                     month = month[1:]
-                year = dateofBirth.split("/")[2]
+                year = self.dateofBirth.split("/")[2]
                 year = int(year[0]) + int(year[1]) + int(year[2]) + int(year[3])
                 total = int(day) + int(month) + int(year)
                 reduced = self.calculate_value(total)
                 result = f"{total}/{reduced}"
-                # red_total = str(total)[0] + str(total)[1]
-                # print(f"{str(total)[0]} nad {str(total)[1]}")
-                # result = f"{total}\\{red_total}"
                 return total
 
             def calculate_value(self, value):
@@ -210,14 +210,14 @@ def generate_image():
                     result = new_var
                 return result
 
-        incoming = "שון לוי"
-        dateofBirthe = "04/09/1990"
+        # incoming = "שון לוי"
+        # dateofBirthe = "04/09/1990"
 
-        incoming = incoming.upper()
-        incoming = incoming.split(" ")
+        # incoming = incoming.upper()
+        # incoming = incoming.split(" ")
 
-        firstName = incoming[0]
-        lastName = incoming[1]
+        # firstName = incoming[0]
+        # lastName = incoming[1]
 
         person = Person(firstName, lastName, dateofBirth)
         print(dateofBirth)
@@ -239,36 +239,36 @@ def generate_image():
         print(
             f"head is: {calHead}, hand is :{calHand}, legs is: {calLegs}, rightLeg is : {calRightLeg}, spirala is: {calSpirala}, leftLeg is : {calLeftLeg}")
 
+
         def plant_parameters(image, parameters, locations):
-            """Plants the given parameters at the given locations in the image.
-
-            Args:
-              image: The image to plant the parameters in.
-              parameters: The parameters to plant.
-              locations: The locations to plant the parameters at.
-
-            Returns:
-              The image with the parameters planted.
-            """
-
+            """Plants the given parameters at the given locations in the image."""
+            from PIL import Image, ImageDraw, ImageFont
+            # המרת התמונה מ-cv2 ל-PIL
+            image_pil = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+            draw = ImageDraw.Draw(image_pil)
+            try:
+                font = ImageFont.truetype("font/Roboto-Regular.ttf", 19)
+            except Exception:
+                font = ImageFont.load_default()
             for location, parameter in zip(locations, parameters):
-                cv2.putText(image, str(parameter), location, cv2.FONT_HERSHEY_COMPLEX, 0.5,
-                            (0, 0, 0), 1)
-
+                x, y = location
+                # קונטור לבן
+                draw.text((x, y), str(parameter), font=font, fill="white", stroke_width=4, stroke_fill="white")
+                # טקסט שחור מעל
+                draw.text((x, y), str(parameter), font=font, fill="black")
+            # המרת התמונה חזרה ל-cv2
+            image = cv2.cvtColor(np.array(image_pil), cv2.COLOR_RGB2BGR)
             return image
 
-        if __name__ == "__main__":
-            image = cv2.imread("background.jpg")
-            parameters = [calHead, calHand, calHand, calLegs, calRightLeg, calLeftLeg, calSpirala]
-            locations = [(302, 38), (509, 408), (75, 410), (283, 727), (540, 726), (25, 726), (312, 208)]
+        image = cv2.imread("background.jpg")
+        parameters = [calHead, calHand, calHand, calLegs, calRightLeg, calLeftLeg, calSpirala]
+        locations = [(302, 38), (509, 408), (75, 410), (283, 727), (540, 726), (25, 726), (312, 208)]
+        planted_image = plant_parameters(image, parameters, locations)
 
-            planted_image = plant_parameters(image, parameters, locations)
+        output_path = "static/output_image.jpg"
+        cv2.imwrite(output_path, planted_image)
 
-            cv2.imshow("Planted Image", planted_image)
-            cv2.waitKey(0)
-
-        # להחזיר את התמונה כתוצאה
-        return render_template('result.html', image=planted_image)
+        return render_template('result.html', image=output_path)
 
     return render_template('form.html')
 

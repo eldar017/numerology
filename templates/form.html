@@ -1,16 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Generate Image</title>
+    <title>יצירת מפה נומרולוגית</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            direction: rtl;
+        }
+        .container {
+            direction: rtl;
+            text-align: right;
+        }
+        label, input, div[style*='font-size'] {
+            text-align: right !important;
+        }
+    </style>
 </head>
 <body>
     <form method="POST" action="/">
-    <label for="firstName">שם פרטי:</label>
-    <input type="text" id="firstName" name="firstName" required><br><br>
-    <label for="lastName">שם משפחה:</label>
-    <input type="text" id="lastName" name="lastName" required><br><br>
-    <label for="dateOfBirth">תאריך לידה:</label>
-    <input type="date" id="dateOfBirth" name="dateOfBirth" required><br><br>
-    <input type="submit" value="שלח">
-</form>
+        <div class="container">
+            <h2>יצירת מפה נומרולוגית</h2>
+            <div style="margin-bottom: 18px; text-align: right;">
+                <label for="firstName">שם פרטי:</label>
+                <input type="text" id="firstName" name="firstName" required style="text-align: right;">
+                <div style="font-size: 0.95em; color: #888; margin-top: 4px; text-align: right;">הזן את שמך הפרטי כפי שהוא מופיע בתעודת הזהות</div>
+            </div>
+            <div style="margin-bottom: 18px; text-align: right;">
+                <label for="lastName">שם משפחה:</label>
+                <input type="text" id="lastName" name="lastName" required style="text-align: right;">
+                <div style="font-size: 0.95em; color: #888; margin-top: 4px; text-align: right;">הזן את שם המשפחה שלך כפי שהוא מופיע בתעודת הזהות</div>
+            </div>
+            <div style="margin-bottom: 18px; text-align: right;">
+            <label>תאריך לידה:</label>
+            <div style="display: flex; gap: 8px; max-width: 350px;">
+                <input type="text" id="birthDay" name="birthDay" maxlength="2" pattern="\d{1,2}" required placeholder="יום" style="width: 60px; text-align: right;">
+                <input type="text" id="birthMonth" name="birthMonth" maxlength="2" pattern="\d{1,2}" required placeholder="חודש" style="width: 60px; text-align: right;">
+                <input type="text" id="birthYear" name="birthYear" maxlength="4" pattern="\d{4}" required placeholder="שנה" style="width: 80px; text-align: right;">
+            </div>
+            <div style="font-size: 0.95em; color: #888; margin-top: 4px; text-align: right;">הזן את יום, חודש ושנת הלידה שלך (לועזי, לדוג' 18 07 2025)</div>
+            </div>
+            <input type="submit" value="צור מפה">
+        </div>
+    </form>
+</body>
+</html>
 

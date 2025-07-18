@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Expose the port on which the app will run
-EXPOSE 5000
+EXPOSE 8080
 
 # Set the environment variable for Flask
 ENV FLASK_APP=EldarNumerology.py

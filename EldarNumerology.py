@@ -235,7 +235,7 @@ class Person:
         new_var = 0
         for digit in str(value):
             new_var += int(digit)
-        result = -new_var
+        result = abs(new_var)
         return result
 
     def reduce_value(self, value):
@@ -272,7 +272,7 @@ class Person:
         month = self.reduce_value(month)
         total = int(day) + int(month)
         total = self.reduce_value(total)
-        return total
+        return abs(total)
 
     def first_period(self):
         month = self.dateofBirth.split("/")[1]
@@ -292,7 +292,7 @@ class Person:
         year = self.reduce_value(year)
         total = int(day) + int(year)
         total = self.reduce_value(total)
-        return total
+        return abs(total)
 
     def second_period(self):
         day = self.dateofBirth.split("/")[0]
@@ -304,7 +304,7 @@ class Person:
     def third_peak(self):
         total = self.reduce_value(self.first_peak()) + self.reduce_value(self.second_peak())
         total = self.reduce_value(total)
-        return total
+        return abs(total)
 
     def third_period(self):
         day = self.dateofBirth.split("/")[0]
@@ -323,7 +323,7 @@ class Person:
         year = self.reduce_value(year)
         total = int(month) + int(year)
         total = self.reduce_value(total)
-        return total
+        return abs(total)
 
     def fourth_period(self):
         year = self.dateofBirth.split("/")[2]
